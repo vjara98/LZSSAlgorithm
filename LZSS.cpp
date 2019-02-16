@@ -3,7 +3,7 @@
 //  TheLZSSAlgorithm
 //
 //  Created by Valeria Jara on 1/21/19.
-//  Copyright © 2019 Valeria Jara. All rights reserved.
+//  Copyright Â© 2019 Valeria Jara. All rights reserved.
 //
 
 #include <sstream>
@@ -325,7 +325,7 @@ void displayLengthBuffer(vector <int> &lengthBuffer, int lookAheadLength){
 	
 }
 
-void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBufferLength, int lookAheadLength){
+void stats(vector<unsigned char> &text, vector<int> lengthBuffer, int searchBufferLength, int lookAheadLength){
    
 	double bytesInFile = 0;
 	double bitsInFile = 0;
@@ -387,7 +387,7 @@ void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBuffe
 	
 }
 
-void compress(int searchBufferLength, int lookAheadLength, vector<unsigned char> text){
+void compress(int searchBufferLength, int lookAheadLength, vector<unsigned char> &text){
 	
 	vector<int> lengthBuffer(lookAheadLength+1, 0);
 	vector <int> indexBuffer(lookAheadLength, 0);
@@ -439,8 +439,8 @@ int main(int argc, const char * argv[]) {
 		
 	}
 	
-	int searchBufferLength = 64;
-    int lookAheadLength = 32;
+	int searchBufferLength = 512;
+	int lookAheadLength = 256;
     
 	
 	compress(searchBufferLength, lookAheadLength, text);
