@@ -29,7 +29,7 @@ int match(int searchBufferLength, int lookAheadLength, int pointer, vector <int>
 	bool matchCont = true;
 	int lookPoint = 0;
 	long int index = 0;
-	
+    
 	auto it = find(searchBuffer.begin(), searchBuffer.end(), lookAhead[0]);
 	
 	if (it != searchBuffer.end()){
@@ -39,11 +39,14 @@ int match(int searchBufferLength, int lookAheadLength, int pointer, vector <int>
 //        cout << "MATCH IS " << lookAhead[lookPoint] << " AND INDEX IS " << searchBufferLength-index-1 << endl;
 
 	}
-	
-	if(searchBuffer[index+1] != lookAhead[lookPoint+1]){
-			matchCont = false;
-	}
-	
+    if(!searchBuffer.empty()){
+        
+        if(searchBuffer[index+1] != lookAhead[lookPoint+1]){
+            matchCont = false;
+        }
+        
+        
+    }
 	while(matchCont == true && !match.empty() && match.size() < lookAheadLength){
 		
 		index++;
@@ -65,13 +68,13 @@ int match(int searchBufferLength, int lookAheadLength, int pointer, vector <int>
 	if(!match.empty()){
 		
 //        cout << "THE MATCH IS:"<< endl;
-
-		for(int i = 0; i < match.size(); i++){
-
+//
+//        for(int i = 0; i < match.size(); i++){
+//
 //            cout << match[i];
-
-		}
-
+//
+//        }
+//
 //        cout << endl;
 
 		return (int)match.size();
@@ -89,40 +92,52 @@ void fillSearchBuff(int searchBufferLength, int lookAheadLength, int matchL){
 	
 	if(lookAhead.empty()){
 		
-		for(int i = 0; i < searchBufferLength; i++){
-//
-			searchBuffer.push_back('0');
-//            cout << searchBuffer[i];
-//
-		}
-//
-//        cout << endl;
+//        for(int i = 0; i < searchBufferLength; i++){
+////
+//            searchBuffer.push_back('0');
+////            cout << searchBuffer[i];
+////
+//        }
+////
 		
 	}else{
 		
 		if(matchL == 0 || matchL == 1){
 			
-			searchBuffer.erase(searchBuffer.begin());
+            if(searchBuffer.size() == searchBufferLength){
+                searchBuffer.erase(searchBuffer.begin());
+            }
 			searchBuffer.push_back(lookAhead[0]);
 			
 		}else if(matchL > 1){
 			
-			for(int i = 0; i < matchL; i++){
-				
-				searchBuffer.erase(searchBuffer.begin());
-				searchBuffer.push_back(lookAhead[i]);
-				
-			}
-			
+            if(!searchBuffer.empty() && searchBuffer.size() < searchBufferLength){
+
+                for(int i = 0; i < matchL; i++){
+                    
+                    searchBuffer.push_back(lookAhead[i]);
+                    
+                }
+                
+            }else{
+                
+                for(int i = 0; i < matchL; i++){
+                    
+                    searchBuffer.erase(searchBuffer.begin());
+                    searchBuffer.push_back(lookAhead[i]);
+                    
+                }
+                
+            }
 		}
 		
-		
-//        for(int i = 0; i < searchBufferLength; i++){
+        
+//        for(int i = 0; i < searchBuffer.size(); i++){
 //
 //            cout << searchBuffer[i];
 //        }
 //        cout << endl;
-		
+        
 		
 	}
 	
@@ -145,24 +160,29 @@ int calcBitsSent(int bitlength1, int bitlength2){
 //fill look ahead buffer
 
 void fillLookAhead(int lookAheadLength, vector<unsigned char> &text, int &pointer, int matchL){
-	
+    
+    
 	if(!lookAhead.empty()){
 		
+//        cout << endl;
+//
 		if(matchL == 0 || matchL == 1){
 			
-			lookAhead.erase(lookAhead.begin());
-			lookAhead.push_back(text[pointer]);
-			pointer++;
+            lookAhead.erase(lookAhead.begin());
+            lookAhead.push_back(text[pointer]);
+            
+            pointer++;
+
 			
 			
 		}else if(matchL > 1){
 			
 			for(int i = 0; i < matchL; i++){
 				
-				lookAhead.erase(lookAhead.begin());
-				lookAhead.push_back(text[pointer]);
-				
-				pointer++;
+                lookAhead.erase(lookAhead.begin());
+                lookAhead.push_back(text[pointer]);
+
+                pointer++;
 
 				
 			}
@@ -173,10 +193,15 @@ void fillLookAhead(int lookAheadLength, vector<unsigned char> &text, int &pointe
 	}else{
 		
 		for(int i = 0; i < lookAheadLength; i++){
-			
-			lookAhead.push_back(text[pointer]);
-			
-			pointer++;
+
+            lookAhead.push_back(text[pointer]);
+                
+//                cout << endl;
+//                cout <<"text " << text[pointer] << endl;
+//
+
+            pointer++;
+
 			
 		}
 
@@ -192,10 +217,6 @@ void fillLookAhead(int lookAheadLength, vector<unsigned char> &text, int &pointe
 //    cout << endl;
 	pointer--;
 	
-}
-
-void newHistogram(vector <int> lengthBuffer, double kBuffer[], int searchBufferLength, int lookAheadLength, int newSize, int newLook){
-
 }
 
 void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, int lookAheadLength, int newLook){
@@ -317,21 +338,29 @@ void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBuffe
 	
 	for(int i = 0; i < lengthBuffer.size(); i++){
 		
+//        bytesInFile += lengthBuffer[i];
+        
+        if(i == 0){
+            
+            bytesInFile += lengthBuffer[i];
+            
+        }else{
+            
+            bytesInFile += lengthBuffer[i]*i;
+
+        }
+
+        
+
 		if(i*9 <= bits){
-			
+            
 			bitsSent += lengthBuffer[i] * 9;
-			bytesInFile += lengthBuffer[i];
-			
 //        }else if (i==1){
 //
 //            bitsSent += lengthBuffer[i] * bits;
 //            bytesInFile += lengthBuffer[i];
-			
 		}else{
-			
 			bitsSent += lengthBuffer[i] * bits;
-			bytesInFile += lengthBuffer[i] * i;
-
 		}
 		
 	}
@@ -346,7 +375,6 @@ void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBuffe
     cout << endl;
     int newLook = ceil((double)(lookAheadLength+1)/2)-1;
 
-    
     while(lookAheadLength > 1){
         
         estimatedCompression(lengthBuffer, searchBufferLength, lookAheadLength, newLook);
@@ -359,25 +387,24 @@ void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBuffe
 	
 }
 
-
 void compress(int searchBufferLength, int lookAheadLength, vector<unsigned char> text){
 	
 	vector<int> lengthBuffer(lookAheadLength+1, 0);
 	vector <int> indexBuffer(lookAheadLength, 0);
-
 	int matchL = 0;
+    
 	
 	for(int pointer = 0; pointer < text.size()+lookAheadLength-1; pointer++){
-	
-//        cout << "Search buffer: ";
-		fillSearchBuff(searchBufferLength, lookAheadLength, matchL);
-//        cout << "Look ahead buffer: ";
-		fillLookAhead(lookAheadLength, text, pointer, matchL);
-		matchL = match(searchBufferLength, lookAheadLength, pointer, indexBuffer);
-		storeLengthBuffer(lengthBuffer, matchL);
-//        displayLengthBuffer(lengthBuffer, lookAheadLength);
-		
-	}
+    
+//            cout << "Search buffer: ";
+            fillSearchBuff(searchBufferLength, lookAheadLength, matchL);
+//            cout << "Look ahead buffer: ";
+            fillLookAhead(lookAheadLength, text, pointer, matchL);
+            matchL = match(searchBufferLength, lookAheadLength, pointer, indexBuffer);
+            storeLengthBuffer(lengthBuffer, matchL);
+//            displayLengthBuffer(lengthBuffer, lookAheadLength);
+
+    }
 	cout << endl;
     displayLengthBuffer(lengthBuffer, lookAheadLength);
 	stats(text, lengthBuffer, searchBufferLength, lookAheadLength);
@@ -389,7 +416,7 @@ int main(int argc, const char * argv[]) {
 	cout << "LZSS Program" << endl;
 //    cout << endl;
 	
-	ifstream file("/Users/valeriajara/Desktop/LZSS/LZSSTest/trans", ifstream::binary);
+	ifstream file("/Users/valeriajara/Desktop/LZSS/LZSSTest/paper4", ifstream::binary);
 	
 	vector<unsigned char> text;
 	
@@ -412,8 +439,8 @@ int main(int argc, const char * argv[]) {
 		
 	}
 	
-	int searchBufferLength = 256;
-	int lookAheadLength = 125;
+	int searchBufferLength = 64;
+    int lookAheadLength = 32;
     
 	
 	compress(searchBufferLength, lookAheadLength, text);
