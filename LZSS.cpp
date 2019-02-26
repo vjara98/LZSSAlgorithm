@@ -219,7 +219,7 @@ void fillLookAhead(int lookAheadLength, vector<unsigned char> &text, int &pointe
 	
 }
 
-void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, int lookAheadLength, int newLook){
+void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, int lookAheadLength, int newLook, int staticSearch){
 	
 	int newLength = ceil((double)lengthBuffer.size()/2);
     double kBuffer[newLength];
@@ -296,14 +296,14 @@ void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, in
     newLook = ceil((double)(lookAheadLength+1)/2)-1;
     vector<int> newHistVec(newHist, newHist + newLength);
 
-    if(newLook/2 > 0){
+    if(newLook/2 > 1){
 
         cout << "---------" << endl;
 
-        estimatedCompression(newHistVec, searchBufferLength/2, newLook, newLook/2);
+        estimatedCompression(newHistVec, staticSearch/2, lookAheadLength/2, newLook/2, staticSearch);
 
     }
-	
+    
 }
 
 void storeLengthBuffer(vector <int> &lengthBuffer, int matchL){
@@ -374,13 +374,15 @@ void stats(vector<unsigned char> text, vector<int> lengthBuffer, int searchBuffe
 	cout << "Alternative Compression (1/Compression): " << (double)(bitsSent/bitsInFile) << endl;
     cout << endl;
     int newLook = ceil((double)(lookAheadLength+1)/2)-1;
+    int countSearchBuffer = searchBufferLength;
 
-    while(lookAheadLength > 1){
+    while(lookAheadLength > 2){
         
-        estimatedCompression(lengthBuffer, searchBufferLength, lookAheadLength, newLook);
+        estimatedCompression(lengthBuffer, searchBufferLength, lookAheadLength, newLook, countSearchBuffer);
         
         cout << "---------" << endl;
         
+        countSearchBuffer = countSearchBuffer/2;
         lookAheadLength = lookAheadLength/2;
         newLook = newLook/2;
     }
@@ -416,7 +418,7 @@ int main(int argc, const char * argv[]) {
 	cout << "LZSS Program" << endl;
 //    cout << endl;
 	
-	ifstream file("/Users/valeriajara/Desktop/LZSS/LZSSTest/paper4", ifstream::binary);
+	ifstream file("/Users/valeriajara/Desktop/LZSS/LZSSTest/bib", ifstream::binary);
 	
 	vector<unsigned char> text;
 	
@@ -439,8 +441,8 @@ int main(int argc, const char * argv[]) {
 		
 	}
 	
-	int searchBufferLength = 64;
-    int lookAheadLength = 32;
+	int searchBufferLength = 128;
+    int lookAheadLength = 64;
     
 	
 	compress(searchBufferLength, lookAheadLength, text);
