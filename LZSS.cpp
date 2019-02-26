@@ -415,10 +415,21 @@ void compress(int searchBufferLength, int lookAheadLength, vector<unsigned char>
 
 int main(int argc, const char * argv[]) {
 	
-	cout << "LZSS Program" << endl;
-//    cout << endl;
-	
-	ifstream file("/Users/valeriajara/Desktop/LZSS/LZSSTest/bib", ifstream::binary);
+	string directory = "/Users/flygen/Temp/ValProject/TestFiles/";
+    	string fileName = "trans";
+    	int searchBufferLength = 128;
+    	int lookAheadLength = 64;
+
+    	//cout << argc;
+    	if(argc == 4) {
+        	//argv[0] = program run call
+       		fileName = string(argv[1]); // argv[1] = file name
+        	searchBufferLength = atoi(argv[2]);
+        	lookAheadLength = atoi(argv[3]);
+
+    	}
+
+    	ifstream file(directory + fileName, ifstream::binary);
 	
 	vector<unsigned char> text;
 	
@@ -440,9 +451,7 @@ int main(int argc, const char * argv[]) {
 		}
 		
 	}
-	
-	int searchBufferLength = 128;
-    int lookAheadLength = 64;    
+	  
 	
 	compress(searchBufferLength, lookAheadLength, text);
 	
