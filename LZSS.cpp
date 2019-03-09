@@ -219,7 +219,7 @@ void fillLookAhead(int lookAheadLength, vector<unsigned char> &text, int &pointe
 	
 }
 
-void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, int lookAheadLength, int newLook, int staticSearch){
+void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, int lookAheadLength, int newLook, int staticSearch, int bitsInFile){
 	
 	int newLength = ceil((double)lengthBuffer.size()/2);
     double kBuffer[newLength];
@@ -266,7 +266,6 @@ void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, in
     long int bits = calcBitsSent(searchBufferLength, ceil((double)(lookAheadLength+1)/2));
     long double totalSentBits = 0;
     int newHist[newLength];
-    long double newTotal = 0;
     
     for(int i = 0; i < newLength; i++){
         
@@ -282,15 +281,13 @@ void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, in
             
         }
         
-        newTotal += newHist[i];
     }
     
     cout << endl;
     cout << totalSentBits << endl;
-    cout << "Total bytes (Added values of new histogram): " << newTotal << endl;
-    cout << "Total bits: (Added values of new histogram): " << newTotal*8 << endl;
+    cout << "Total bits: (Added values of new histogram): " << bitsInFile << endl;
     cout << "New Sent bits: (Sending 9 bits for misses and certain matches, sending " << bits << " bits per match): " << totalSentBits << endl;
-    cout << "Estimated Compression Ratio: (Total Bits / New Sent bits) "<< (double)((double)(newTotal*8)/(double)totalSentBits)<< endl;
+    cout << "Estimated Compression Ratio: (Total Bits / New Sent bits) "<< (double)((double)(bitsInFile)/(double)totalSentBits)<< endl;
     cout << "This is " << searchBufferLength << "x" << newLook << endl;
     
     newLook = ceil((double)(lookAheadLength+1)/2)-1;
@@ -300,7 +297,7 @@ void estimatedCompression(vector <int> &lengthBuffer, int searchBufferLength, in
 
         cout << "---------" << endl;
 
-        estimatedCompression(newHistVec, staticSearch/2, lookAheadLength/2, newLook/2, staticSearch);
+        estimatedCompression(newHistVec, staticSearch/2, lookAheadLength/2, newLook/2, staticSearch, bitsInFile);
 
     }
     
@@ -378,7 +375,7 @@ void stats(vector<unsigned char> &text, vector<int> lengthBuffer, int searchBuff
 
     while(lookAheadLength > 2){
         
-        estimatedCompression(lengthBuffer, searchBufferLength, lookAheadLength, newLook, countSearchBuffer);
+        estimatedCompression(lengthBuffer, searchBufferLength, lookAheadLength, newLook, countSearchBuffer, bitsInFile);
         
         cout << "---------" << endl;
         
@@ -441,8 +438,8 @@ int main(int argc, const char * argv[]) {
 		
 	}
 	
-	int searchBufferLength = 128;
-    int lookAheadLength = 64;    
+	int searchBufferLength = 64;
+    int lookAheadLength = 16;
 	
 	compress(searchBufferLength, lookAheadLength, text);
 	
